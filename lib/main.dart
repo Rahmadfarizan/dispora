@@ -21,9 +21,15 @@
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_wordpress_example/views/home2.dart';
 import 'package:flutter_wordpress_example/wp_api.dart';
 
+/// warna
+/// 29366A biru
+/// F9322E merah
+/// F05C39 oren
+/// 458E32 hijau
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -56,7 +62,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context),
+      appBar: (_selectedIndex == 0)
+          ? buildAppBar(context)
+          : AppBar(
+              toolbarHeight: 0,
+              backgroundColor: Color(0xff29366A),
+            ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: buildBottomBar(),
     );
@@ -64,42 +75,61 @@ class _MyAppState extends State<MyApp> {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
+      titleSpacing: 0,
+      toolbarHeight: 100,
+      backgroundColor: Colors.white,
       title: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 50,
-            width: MediaQuery.of(context).size.width / 4,
-            alignment: Alignment.topLeft,
-            decoration: const BoxDecoration(
-              image: DecorationImage(image: AssetImage("assets/dispora.png")),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Container(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width / 4,
+                  alignment: Alignment.topLeft,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/dispora.png"),
+                      fit: BoxFit.contain, // Adjust this to your needs
+                    ),
+                  ),
+                ),
+                Spacer(),
+                Icon(
+                  Icons.search_rounded,
+                  color: Colors.black,
+                )
+              ],
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           FutureBuilder(
-              future: fetchWpCategory(),
-              builder: (context, snapshot) {
+            future: fetchWpCategory(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasData) {
                   return SizedBox(
-                    height: 40,
+                    height: 20,
                     width: MediaQuery.of(context).size.width,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         Map wpPost = snapshot.data![index];
-
                         return Container(
-                          padding: const EdgeInsets.only(right: 20),
+                          padding: EdgeInsets.only(
+                            left: 16,
+                            right:
+                                (index == snapshot.data!.length - 1) ? 16 : 0,
+                          ),
                           child: Text(
                             wpPost["name"],
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
+                            style: TextStyle(
+                              color: (index == 0) ? Colors.black : Colors.grey,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         );
@@ -107,13 +137,12 @@ class _MyAppState extends State<MyApp> {
                     ),
                   );
                 }
-
-                return const CircularProgressIndicator();
-              }),
+              }
+              return const CircularProgressIndicator();
+            },
+          ),
         ],
       ),
-      toolbarHeight: 100,
-      backgroundColor: Colors.white,
     );
   }
 
@@ -133,20 +162,20 @@ class _MyAppState extends State<MyApp> {
         backgroundColor: Colors.white,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.dashboard_rounded),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+            icon: Icon(Icons.business_rounded),
+            label: 'Fasilitas',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.group_rounded),
+            label: 'Sosial',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Color(0xff29366A),
         onTap: _onItemTapped,
       ),
     );
@@ -166,7 +195,7 @@ class _FirstPageState extends State<FirstPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xffE3F4F4),
+      color: const Color(0xffF9F7F7),
       child: FutureBuilder(
         future: fetchWpPosts(),
         builder: (_, snapshot) {
@@ -186,12 +215,12 @@ class _FirstPageState extends State<FirstPage> {
                   children: [
                     if (index == 0)
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         child: CarouselSlider(
                           items: [
                             for (int i = 0; i < listImages.length; i++)
                               Container(
-                                width: MediaQuery.of(context).size.width,
+                                width: MediaQuery.of(context).size.width - 32,
                                 decoration: BoxDecoration(
                                   borderRadius: const BorderRadius.all(
                                       Radius.circular(10)),
@@ -284,8 +313,9 @@ class _FirstPageState extends State<FirstPage> {
                                       list[index]['title']['rendered'] ?? "",
                                       style: const TextStyle(
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w500),
+                                          fontWeight: FontWeight.w700),
                                       maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   Container(
