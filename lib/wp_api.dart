@@ -5,7 +5,8 @@ import 'dart:developer' as logger show log;
 import 'package:http/http.dart' as http;
 
 Future<List?> fetchWpPosts() async {
-  final Uri url = Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/posts");
+  final Uri url =
+      Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/posts?_embed");
   final response = await http.get(url, headers: {"Accept": "application/json"});
 
   var convertedDatatoJson = jsonDecode(response.body);
@@ -64,6 +65,16 @@ class Api {
 
 Future fetchWpPostCategory(String href) async {
   final Uri url = Uri.parse(href);
+  final response = await http.get(url, headers: {"Accept": "application/json"});
+
+  var convertedDatatoJson = jsonDecode(response.body);
+
+  return convertedDatatoJson;
+}
+
+Future fetchWpCategory() async {
+  final Uri url =
+      Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/categories?_embed");
   final response = await http.get(url, headers: {"Accept": "application/json"});
 
   var convertedDatatoJson = jsonDecode(response.body);
