@@ -5,6 +5,7 @@ import 'package:dispora/views/fasiltas_page.dart';
 import 'package:dispora/service/service_api.dart';
 import 'package:flutter/services.dart';
 import 'package:shimmer/shimmer.dart';
+import 'dart:developer' as logger show log;
 
 /// warna
 /// 29366A biru
@@ -124,6 +125,9 @@ class _MyAppState extends State<MyApp> {
                             },
                           ),
                         );
+                      } else {
+                        logger.log("Data Tidak Dietmukan");
+                        return SizedBox.shrink();
                       }
                     }
                     return Shimmer.fromColors(
