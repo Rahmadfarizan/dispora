@@ -1,4 +1,4 @@
-package com.example.flutter_wordpress_example
+package com.example.dispora
 
 import io.flutter.embedding.android.FlutterActivity
 

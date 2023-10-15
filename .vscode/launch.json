@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "flutter_wordpress_example",
+            "name": "dispora",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "flutter_wordpress_example (profile mode)",
+            "name": "dispora (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "flutter_wordpress_example (release mode)",
+            "name": "dispora (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

@@ -24,7 +24,20 @@ Future fetchWpPostImage(String href) async {
 }
 
 Future<List?> fetchWpVenue() async {
-  final Uri url = Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/pages");
+  final Uri url =
+      Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/media?parent=6631");
+  final response = await http.get(url, headers: {"Accept": "application/json"});
+
+  var convertedDatatoJson = jsonDecode(response.body);
+  if (kDebugMode) {
+    logger.log("fetchWpVenue => $convertedDatatoJson");
+  }
+  return convertedDatatoJson;
+}
+
+Future<List?> fetchWpDetailVenue() async {
+  final Uri url =
+      Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/pages?_embed");
   final response = await http.get(url, headers: {"Accept": "application/json"});
 
   var convertedDatatoJson = jsonDecode(response.body);
@@ -43,24 +56,6 @@ Future<List?> fetchWpMedia() async {
     logger.log("fetchWpMedia => $convertedDatatoJson");
   }
   return convertedDatatoJson;
-}
-
-class Api {
-  //method untuk mengambil data
-  Future fetchData() async {
-    //mengambil data dari api
-    //kita mengambil data dari website hipwee dan menyimpannya ke variabel dataJson
-    //anda bisa menggunakan url dari website lain asalkan menggunakan wordpress dan api yang dapat diakses
-    var dataJson = await http.get(
-        Uri.parse('https://dispora.di-mep.com/wp-json/wp/v2/media?_embed'));
-
-    //mengubah string ke objek dart
-    //perubahan ini bertujuan agar data dapat dikelola dengan mudah
-    var data = jsonDecode(dataJson.body);
-
-    //mengembalikan data
-    return data;
-  }
 }
 
 Future fetchWpPostCategory(String href) async {
