@@ -40,6 +40,8 @@ dependencies:
   flutter_widget_from_html: ^0.10.6
   carousel_slider: ^4.2.1
   shimmer: ^3.0.0
+  youtube_player_flutter: ^8.1.2
+  webviewtube: ^2.0.0
 
 dev_dependencies:
   flutter_test:

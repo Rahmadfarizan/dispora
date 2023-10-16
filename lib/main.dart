@@ -1,5 +1,6 @@
 import 'package:dispora/views/home_page.dart';
 import 'package:dispora/views/sosial_page.dart';
+import 'package:dispora/views/video_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dispora/views/fasiltas_page.dart';
 import 'package:dispora/service/service_api.dart';
@@ -36,6 +37,7 @@ class _MyAppState extends State<MyApp> {
     const HomePage(),
     const FasilitasPage(),
     const SosialPage(),
+    const VideoPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -194,9 +196,16 @@ class _MyAppState extends State<MyApp> {
             icon: Icon(Icons.group_rounded),
             label: 'Sosial',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.play_arrow),
+            label: 'Video',
+          ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xff29366A),
+        // unselectedItemColor: Colors.grey,
+        // showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
         onTap: _onItemTapped,
       ),
     );
