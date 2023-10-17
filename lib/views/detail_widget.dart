@@ -30,32 +30,32 @@ class Detail extends StatelessWidget {
             alignment: AlignmentDirectional.topStart,
             children: [
               /// untuk pages dan posts
-              // if (image != "")
-              CachedNetworkImage(
-                imageUrl: image!,
-                placeholder: (context, url) {
-                  return Container(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.33,
-                    decoration: BoxDecoration(color: Colors.grey.shade300),
-                  );
-                },
-                errorWidget: (context, url, error) {
-                  // Menampilkan gambar pengganti jika URL mengembalikan kode status 404.
-                  return Container(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.33,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                    ),
-                    child: Image.asset(
-                      "assets/dispora.png",
-                      color: Colors.white,
-                    ),
-                  ); // Ganti dengan placeholder yang sesuai.
-                },
-              ),
+              if (image != "")
+                CachedNetworkImage(
+                  imageUrl: image!,
+                  placeholder: (context, url) {
+                    return Container(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height * 0.33,
+                      decoration: BoxDecoration(color: Colors.grey.shade300),
+                    );
+                  },
+                  errorWidget: (context, url, error) {
+                    // Menampilkan gambar pengganti jika URL mengembalikan kode status 404.
+                    return Container(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height * 0.33,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                      ),
+                      child: Image.asset(
+                        "assets/dispora.png",
+                        color: Colors.white,
+                      ),
+                    ); // Ganti dengan placeholder yang sesuai.
+                  },
+                ),
               InkWell(
                 onTap: () {
                   Navigator.pop(context);
