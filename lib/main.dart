@@ -57,116 +57,115 @@ class _MyAppState extends State<MyApp> {
 
   AppBar buildAppBar() {
     return AppBar(
-      titleSpacing: (_selectedIndex == 0) ? 0 : null,
-      toolbarHeight: (_selectedIndex == 0)
-          ? 100
-          : (_selectedIndex == 1)
-              ? null
-              : 0,
-      backgroundColor:
-          (_selectedIndex != 2) ? Colors.white : const Color(0xff29366A),
-      title: (_selectedIndex == 0)
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 50,
-                        width: MediaQuery.of(context).size.width / 4,
-                        alignment: Alignment.topLeft,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("assets/dispora.png"),
-                            fit: BoxFit.contain,
+        titleSpacing: (_selectedIndex == 0) ? 0 : null,
+        toolbarHeight: (_selectedIndex == 0) ? 100 : null,
+        backgroundColor:
+            (_selectedIndex != 2) ? Colors.white : const Color(0xff29366A),
+        elevation: 2,
+        shadowColor: Colors.grey.withOpacity(0.2),
+        title: (_selectedIndex == 0)
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 50,
+                          width: MediaQuery.of(context).size.width / 4,
+                          alignment: Alignment.topLeft,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage("assets/dispora.png"),
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                      ),
-                      const Spacer(),
-                      const Icon(
-                        Icons.search_rounded,
-                        color: Colors.black,
-                      )
-                    ],
+                        const Spacer(),
+                        const Icon(
+                          Icons.search_rounded,
+                          color: Colors.black,
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                FutureBuilder(
-                  future: fetchWpCategory(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasData) {
-                        return SizedBox(
-                          height: 20,
-                          width: MediaQuery.of(context).size.width,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              Map wpPost = snapshot.data![index];
-                              return Container(
-                                padding: EdgeInsets.only(
-                                  left: 16,
-                                  right: (index == snapshot.data!.length - 1)
-                                      ? 16
-                                      : 0,
-                                ),
-                                child: Text(
-                                  wpPost["name"],
-                                  style: TextStyle(
-                                    color: (index == 0)
-                                        ? Colors.black
-                                        : Colors.grey,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                  const SizedBox(height: 10),
+                  FutureBuilder(
+                    future: fetchWpCategory(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasData) {
+                          return SizedBox(
+                            height: 20,
+                            width: MediaQuery.of(context).size.width,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                Map wpPost = snapshot.data![index];
+                                return Container(
+                                  padding: EdgeInsets.only(
+                                    left: 16,
+                                    right: (index == snapshot.data!.length - 1)
+                                        ? 16
+                                        : 0,
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      } else {
-                        logger.log("Data Tidak Dietmukan");
-                        return SizedBox.shrink();
+                                  child: Text(
+                                    wpPost["name"],
+                                    style: TextStyle(
+                                      color: (index == 0)
+                                          ? Colors.black
+                                          : Colors.grey,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        } else {
+                          logger.log("Data Tidak Dietmukan");
+                          return SizedBox.shrink();
+                        }
                       }
-                    }
-                    return Shimmer.fromColors(
-                      baseColor: Colors.grey.shade300,
-                      highlightColor: Colors.grey.shade100,
-                      enabled: true,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const NeverScrollableScrollPhysics(),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              for (int i = 0; i < 5; i++)
-                                const CategoryPlaceholder(width: 80),
-                            ],
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        enabled: true,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const NeverScrollableScrollPhysics(),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                for (int i = 0; i < 5; i++)
+                                  const CategoryPlaceholder(width: 80),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            )
-          : (_selectedIndex == 1)
-              ? const Text(
-                  "Fasilitas",
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Color(0xff29366A),
-                    fontWeight: FontWeight.w600,
+                      );
+                    },
                   ),
-                )
-              : const SizedBox.shrink(),
-    );
+                ],
+              )
+            : Text(
+                (_selectedIndex == 1)
+                    ? "Fasilitas"
+                    : (_selectedIndex == 2)
+                        ? "Sosial"
+                        : "Video",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Color(0xff29366A),
+                  fontWeight: FontWeight.w600,
+                ),
+              ));
   }
 
   Container buildBottomBar() {
@@ -174,10 +173,10 @@ class _MyAppState extends State<MyApp> {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 5,
+            color: Colors.grey.shade50,
+            spreadRadius: 1,
             blurRadius: 5,
-            offset: const Offset(0, -3),
+            offset: const Offset(0, -1),
           ),
         ],
       ),

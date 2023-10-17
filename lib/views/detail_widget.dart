@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
@@ -29,20 +30,32 @@ class Detail extends StatelessWidget {
             alignment: AlignmentDirectional.topStart,
             children: [
               /// untuk pages dan posts
-              if (image != "")
-                Container(
-                  //ukuran gambar selebar perangkat
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.33,
-
-                  //anda dapat mengisi container dengan gambar menggunakan properti ini
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(image!), // menampilkan gambar
-                      fit: BoxFit.cover,
+              // if (image != "")
+              CachedNetworkImage(
+                imageUrl: image!,
+                placeholder: (context, url) {
+                  return Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.33,
+                    decoration: BoxDecoration(color: Colors.grey.shade300),
+                  );
+                },
+                errorWidget: (context, url, error) {
+                  // Menampilkan gambar pengganti jika URL mengembalikan kode status 404.
+                  return Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.33,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
                     ),
-                  ),
-                ),
+                    child: Image.asset(
+                      "assets/dispora.png",
+                      color: Colors.white,
+                    ),
+                  ); // Ganti dengan placeholder yang sesuai.
+                },
+              ),
               InkWell(
                 onTap: () {
                   Navigator.pop(context);

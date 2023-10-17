@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dispora/views/detail_widget.dart';
 import 'package:dispora/service/service_api.dart';
@@ -12,6 +13,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String modifyDateTime(String originalDateTime) {
+    // Parse the original date from the string
+    DateTime parsedDateTime = DateTime.parse(originalDateTime);
+
+    // Calculate the time difference between the current time and the original time
+    Duration difference = DateTime.now().difference(parsedDateTime);
+
+    if (difference.inDays >= 7) {
+      int weeks = (difference.inDays / 7).floor();
+      return "${weeks} minggu yang lalu";
+    } else if (difference.inDays >= 1) {
+      return "${difference.inDays} hari yang lalu";
+    } else if (difference.inHours >= 1) {
+      return "${difference.inHours} jam yang lalu";
+    } else if (difference.inMinutes >= 1) {
+      return "${difference.inMinutes} menit yang lalu";
+    } else {
+      return "A few seconds ago";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,19 +66,55 @@ class _HomePageState extends State<HomePage> {
                               for (final imageUrl in listImages)
                                 Container(
                                   width: MediaQuery.of(context).size.width - 32,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
                                       Radius.circular(10),
                                     ),
-                                    image: DecorationImage(
-                                      image: NetworkImage(imageUrl),
-                                      fit: BoxFit.cover,
-                                    ),
+                                  ),
+                                  child: CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    placeholder: (context, url) {
+                                      return Container(
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                32,
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                4,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                              Radius.circular(10),
+                                            ),
+                                            color: Colors.grey.shade300),
+                                      );
+                                    },
+                                    errorWidget: (context, url, error) {
+                                      // Menampilkan gambar pengganti jika URL mengembalikan kode status 404.
+                                      return Container(
+                                        height:
+                                            MediaQuery.of(context).size.width /
+                                                4,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                4,
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        child: Image.asset(
+                                          "assets/dispora.png",
+                                          color: Colors.white,
+                                        ),
+                                      ); // Ganti dengan placeholder yang sesuai.
+                                    },
                                   ),
                                 ),
                             ],
                             options: CarouselOptions(
-                              height: MediaQuery.of(context).size.height / 3,
+                              height: MediaQuery.of(context).size.height / 4,
                               autoPlay: true,
                               autoPlayInterval: const Duration(seconds: 10),
                               autoPlayAnimationDuration:
@@ -95,17 +153,52 @@ class _HomePageState extends State<HomePage> {
                                 Container(
                                   height: MediaQuery.of(context).size.width / 4,
                                   width: MediaQuery.of(context).size.width / 4,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10)),
-                                    image: DecorationImage(
-                                      image: NetworkImage(list[index]
-                                                      ['_embedded']
-                                                  ['wp:featuredmedia'][0]
-                                              ['source_url'] ??
-                                          ""),
-                                      fit: BoxFit.cover,
-                                    ),
+                                  decoration: const BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                  child: CachedNetworkImage(
+                                    imageUrl: list[index]['_embedded']
+                                                ['wp:featuredmedia'][0]
+                                            ['source_url'] ??
+                                        "",
+                                    placeholder: (context, url) {
+                                      return Container(
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                32,
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                4,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                              Radius.circular(10),
+                                            ),
+                                            color: Colors.grey.shade300),
+                                      );
+                                    },
+                                    errorWidget: (context, url, error) {
+                                      // Menampilkan gambar pengganti jika URL mengembalikan kode status 404.
+                                      return Container(
+                                        padding: const EdgeInsets.all(10),
+                                        height:
+                                            MediaQuery.of(context).size.width /
+                                                4,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                4,
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        child: Image.asset(
+                                          "assets/dispora.png",
+                                          color: Colors.white,
+                                        ),
+                                      ); // Ganti dengan placeholder yang sesuai.
+                                    },
                                   ),
                                 )
                               else
@@ -113,14 +206,14 @@ class _HomePageState extends State<HomePage> {
                                   height: MediaQuery.of(context).size.width / 4,
                                   width: MediaQuery.of(context).size.width / 4,
                                   padding: const EdgeInsets.all(10),
-                                  decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    color: Colors.grey,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(10)),
+                                    color: Colors.grey.shade300,
                                   ),
                                   child: Image.asset(
                                     "assets/dispora.png",
-                                    color: Colors.white54,
+                                    color: Colors.white,
                                   ),
                                 ),
                               SizedBox(
@@ -148,7 +241,7 @@ class _HomePageState extends State<HomePage> {
                                     Container(
                                       padding: const EdgeInsets.only(left: 10),
                                       child: Text(
-                                        list[index]['date'],
+                                        modifyDateTime(list[index]['date']),
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey,
@@ -173,10 +266,12 @@ class _HomePageState extends State<HomePage> {
               );
             } else {
               // Handle the case where data is null
-              return Center(
+              return const Center(
                 child: Text("No data available"),
               );
             }
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return _buildLoadingListWidget();
           } else {
             return Center(
               child: SizedBox(
@@ -192,6 +287,111 @@ class _HomePageState extends State<HomePage> {
             );
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildLoadingListWidget() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      enabled: true,
+      child: ListView(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width - 32,
+                  height: MediaQuery.of(context).size.height / 4,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                for (int i = 0; i < 5; i++)
+                  Container(
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.width / 4,
+                          width: MediaQuery.of(context).size.width / 4,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.width / 4,
+                          width: (MediaQuery.of(context).size.width -
+                                  MediaQuery.of(context).size.width / 4) -
+                              (32),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin:
+                                    const EdgeInsets.only(left: 10, bottom: 8),
+                                height: 16,
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Container(
+                                margin:
+                                    const EdgeInsets.only(left: 10, bottom: 8),
+                                height: 16,
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Container(
+                                margin:
+                                    const EdgeInsets.only(left: 10, bottom: 10),
+                                height: 16,
+                                width: MediaQuery.of(context).size.width / 2,
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(left: 10),
+                                height: 12,
+                                width: 120,
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

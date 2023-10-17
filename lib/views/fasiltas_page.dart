@@ -29,23 +29,41 @@ class _FasilitasPageState extends State<FasilitasPage> {
     }
   }
 
+  String modifyDateTime(String originalDateTime) {
+    // Parse the original date from the string
+    DateTime parsedDateTime = DateTime.parse(originalDateTime);
+
+    // Calculate the time difference between the current time and the original time
+    Duration difference = DateTime.now().difference(parsedDateTime);
+
+    if (difference.inDays >= 7) {
+      int weeks = (difference.inDays / 7).floor();
+      return "${weeks} minggu yang lalu";
+    } else if (difference.inDays >= 1) {
+      return "${difference.inDays} hari yang lalu";
+    } else if (difference.inHours >= 1) {
+      return "${difference.inHours} jam yang lalu";
+    } else if (difference.inMinutes >= 1) {
+      return "${difference.inMinutes} menit yang lalu";
+    } else {
+      return "A few seconds ago";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: FutureBuilder(
-        future: model.fetchVenueData(),
-        builder: (_, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildLoadingWidget();
-          } else if (snapshot.hasError) {
-            return const Center(child: Text("Error: Tidak Ditemukan"));
-          } else {
-            final list = snapshot.data as List;
-            return _buildVenueList(list);
-          }
-        },
-      ),
+    return FutureBuilder(
+      future: model.fetchVenueData(),
+      builder: (_, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingWidget();
+        } else if (snapshot.hasError) {
+          return const Center(child: Text("Error: Tidak Ditemukan"));
+        } else {
+          final list = snapshot.data as List;
+          return _buildVenueList(list);
+        }
+      },
     );
   }
 
@@ -65,68 +83,71 @@ class _FasilitasPageState extends State<FasilitasPage> {
   }
 
   Widget _buildLoadingListWidget() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
-      enabled: true,
-      child: Container(
-        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.width / 4,
-              width: MediaQuery.of(context).size.width / 4,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                color: Colors.white,
+    return Container(
+      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: Colors.white,
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        enabled: true,
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height / 4,
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
+                  color: Colors.white,
+                ),
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.width / 4,
-              width: (MediaQuery.of(context).size.width -
-                      MediaQuery.of(context).size.width / 4) -
-                  (32),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(left: 10, bottom: 10),
-                    height: 20,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                      color: Colors.white,
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 10, bottom: 10),
-                    height: 20,
-                    width: 120,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                      color: Colors.white,
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 10),
-                    height: 16,
-                    width: 150,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+              SizedBox(
+                height: 16,
               ),
-            ),
-          ],
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(
+                          left: 10, right: 10, bottom: 10),
+                      height: 16,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                        color: Colors.white,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                      ),
+                      height: 12,
+                      width: 150,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -134,6 +155,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
 
   Widget _buildVenueList(List list) {
     return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 16),
       itemCount: list.length,
       itemBuilder: (context, index) {
         return FutureBuilder(
@@ -147,7 +169,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
               return _buildVenueItem(
                 venueInfo,
                 list[index]['guid']['rendered'],
-                list[index]['date'],
+                modifyDateTime(list[index]['date']),
               );
             } else if (snapshot.hasError) {
               return const Text("Tidak Ditemukan");
@@ -191,15 +213,17 @@ class _FasilitasPageState extends State<FasilitasPage> {
           },
           child: Container(
             padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-            child: Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (imageUrl != null)
                   Container(
-                    height: MediaQuery.of(context).size.width / 4,
-                    width: MediaQuery.of(context).size.width / 4,
+                    height: MediaQuery.of(context).size.height / 4,
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10)),
                       image: DecorationImage(
                         image: NetworkImage(imageUrl),
                         fit: BoxFit.cover,
@@ -220,33 +244,37 @@ class _FasilitasPageState extends State<FasilitasPage> {
                       color: Colors.white54,
                     ),
                   ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.width / 4,
-                  width: (MediaQuery.of(context).size.width -
-                          MediaQuery.of(context).size.width / 4) -
-                      (32),
+                Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
+                    color: Colors.white,
+                  ),
+                  padding: const EdgeInsets.only(top: 10, left: 10, bottom: 10),
+                  width: MediaQuery.of(context).size.width,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.only(left: 10, bottom: 10),
-                        child: Text(
-                          venueInfo['title'] ?? "",
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                      Text(
+                        venueInfo['title'] ?? "",
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w700),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      Container(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text(
-                          date,
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
-                          maxLines: 3,
-                        ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        date,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(
+                        height: 10,
                       ),
                     ],
                   ),

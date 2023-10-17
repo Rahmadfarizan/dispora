@@ -5,8 +5,25 @@ class SosialPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Sosial Page'),
+    return DefaultTabController(
+      length: 2, // Number of tabs
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 0,
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'Tab 1'),
+              Tab(text: 'Tab 2'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            Center(child: Text('Tab 1 Content')),
+            Center(child: Text('Tab 2 Content')),
+          ],
+        ),
+      ),
     );
   }
 }
