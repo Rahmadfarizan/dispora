@@ -77,7 +77,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
           baseColor: const Color(0xff29366A),
           highlightColor: const Color(0xffF05C39),
           period: const Duration(milliseconds: 1200),
-          child: Image.asset("assets/dispora.png"),
+          child: Image.asset("assets/logodispora.png"),
         ),
       ),
     );
@@ -246,7 +246,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                   color: Colors.grey,
                 ),
                 child: Image.asset(
-                  "assets/dispora.png",
+                  "assets/logodispora.png",
                   color: Colors.white54,
                 ),
               ),

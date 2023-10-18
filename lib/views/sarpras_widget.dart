@@ -1,39 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import 'package:webview_flutter_android/webview_flutter_android.dart';
-// Import for iOS features.
-import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-
-// #enddocregion platform_imports
 class SarprasWidget extends StatefulWidget {
-  const SarprasWidget({super.key});
+  const SarprasWidget({Key? key});
 
   @override
-  State<SarprasWidget> createState() => _SarprasWidgetState();
+  _SarprasWidgetState createState() => _SarprasWidgetState();
 }
 
 class _SarprasWidgetState extends State<SarprasWidget> {
   late final WebViewController _controller;
+  bool isLoading = true;
+  bool hasError = false;
 
   @override
   void initState() {
     super.initState();
 
-    // #docregion platform_features
-    late final PlatformWebViewControllerCreationParams params;
-    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      params = WebKitWebViewControllerCreationParams(
-        allowsInlineMediaPlayback: true,
-        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-      );
-    } else {
-      params = const PlatformWebViewControllerCreationParams();
-    }
-
-    final WebViewController controller =
-        WebViewController.fromPlatformCreationParams(params);
-    // #enddocregion platform_features
+    final WebViewController controller = WebViewController();
 
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -44,30 +29,42 @@ class _SarprasWidgetState extends State<SarprasWidget> {
             debugPrint('WebView is loading (progress : $progress%)');
           },
           onPageStarted: (String url) {
+            setState(() {
+              isLoading = true;
+              hasError = false;
+            });
             debugPrint('Page started loading: $url');
           },
           onPageFinished: (String url) {
+            setState(() {
+              isLoading = false;
+              hasError = false;
+            });
             debugPrint('Page finished loading: $url');
           },
           onWebResourceError: (WebResourceError error) {
+            setState(() {
+              isLoading = false;
+              hasError = true;
+            });
             debugPrint('''
-Page resource error:
-  code: ${error.errorCode}
-  description: ${error.description}
-  errorType: ${error.errorType}
-  isForMainFrame: ${error.isForMainFrame}
-          ''');
+              Page resource error:
+              code: ${error.errorCode}
+              description: ${error.description}
+              errorType: ${error.errorType}
+              isForMainFrame: ${error.isForMainFrame}
+            ''');
           },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.startsWith('https://www.youtube.com/')) {
-              debugPrint('blocking navigation to ${request.url}');
+              debugPrint('Blocking navigation to ${request.url}');
               return NavigationDecision.prevent;
             }
-            debugPrint('allowing navigation to ${request.url}');
+            debugPrint('Allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
           },
           onUrlChange: (UrlChange change) {
-            debugPrint('url change to ${change.url}');
+            debugPrint('URL change to ${change.url}');
           },
         ),
       )
@@ -82,22 +79,45 @@ Page resource error:
       ..loadRequest(Uri.parse(
           'https://sarpras-eporabertuah.pekanbaru.go.id/PetaSarpras'));
 
-    // #docregion platform_features
-    if (controller.platform is AndroidWebViewController) {
-      AndroidWebViewController.enableDebugging(true);
-      (controller.platform as AndroidWebViewController)
-          .setMediaPlaybackRequiresUserGesture(false);
-    }
-    // #enddocregion platform_features
-
     _controller = controller;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 2,
-        child: WebViewWidget(controller: _controller));
+    return Stack(
+      children: <Widget>[
+        WebViewWidget(
+          controller: _controller,
+        ),
+        if (isLoading)
+          _buildLoadingWidget()
+        else if (hasError)
+          _buildErrorWidget()
+      ],
+    );
+  }
+
+  Widget _buildLoadingWidget() {
+    return Center(
+      child: SizedBox(
+        width: 200.0,
+        height: 100.0,
+        child: Shimmer.fromColors(
+          baseColor: const Color(0xff29366A),
+          highlightColor: const Color(0xffF05C39),
+          period: const Duration(milliseconds: 1200),
+          child: Image.asset("assets/logodispora.png"),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return Center(
+      child: Text(
+        'Failed to load the page',
+        style: TextStyle(fontSize: 18, color: Colors.red),
+      ),
+    );
   }
 }

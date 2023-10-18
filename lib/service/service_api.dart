@@ -3,9 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'dart:developer' as logger show log;
 import 'package:http/http.dart' as http;
 
-Future<List?> fetchWpPosts() async {
-  final Uri url =
-      Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/posts?_embed");
+Future<List?> fetchWpPosts(categoryPost) async {
+  // final Uri url =
+  //     Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/posts?_embed");
+  final Uri url = Uri.parse(
+      "https://dispora.di-mep.com/wp-json/wp/v2/posts?_embed&categories=$categoryPost");
   try {
     final response =
         await http.get(url, headers: {"Accept": "application/json"});

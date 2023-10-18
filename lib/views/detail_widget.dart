@@ -126,7 +126,7 @@ class _DetailState extends State<Detail> {
                           color: Colors.grey.shade300,
                         ),
                         child: Image.asset(
-                          "assets/dispora.png",
+                          "assets/logodispora.png",
                           color: Colors.white,
                         ),
                       ); // Ganti dengan placeholder yang sesuai.
@@ -181,7 +181,7 @@ class _DetailState extends State<Detail> {
                 ),
               ),
               // Builds 1000 ListTiles
-              childCount: 10,
+              childCount: 1,
             ),
           ),
         ],
