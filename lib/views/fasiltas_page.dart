@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import '../models/venue_model.dart';
 import 'detail_widget.dart';
@@ -85,8 +86,9 @@ class _FasilitasPageState extends State<FasilitasPage> {
   Widget _buildLoadingListWidget() {
     return Container(
       margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: Colors.grey.shade300),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Colors.white,
       ),
       child: Shimmer.fromColors(
@@ -107,7 +109,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               SizedBox(
@@ -143,7 +145,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
             ],
@@ -172,7 +174,10 @@ class _FasilitasPageState extends State<FasilitasPage> {
                 modifyDateTime(list[index]['date']),
               );
             } else if (snapshot.hasError) {
-              return const Text("Tidak Ditemukan");
+              return Text(
+                "Tidak Ditemukan",
+                style: GoogleFonts.arimo(),
+              );
             } else {
               return const SizedBox.shrink();
             }
@@ -196,94 +201,95 @@ class _FasilitasPageState extends State<FasilitasPage> {
 
   Widget _buildVenueItem(
       Map<String, String> venueInfo, String imageUrl, String date) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Detail(
-                  title: venueInfo['title'],
-                  content: venueInfo['content'],
-                  image: imageUrl ?? "",
-                ),
-              ),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (imageUrl != null)
-                  Container(
-                    height: MediaQuery.of(context).size.height / 4,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10)),
-                      image: DecorationImage(
-                        image: NetworkImage(imageUrl),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  )
-                else
-                  Container(
-                    height: MediaQuery.of(context).size.width / 4,
-                    width: MediaQuery.of(context).size.width / 4,
-                    padding: const EdgeInsets.all(10),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Colors.grey,
-                    ),
-                    child: Image.asset(
-                      "assets/dispora.png",
-                      color: Colors.white54,
-                    ),
-                  ),
-                Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10)),
-                    color: Colors.white,
-                  ),
-                  padding: const EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        venueInfo['title'] ?? "",
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        date,
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.grey),
-                        maxLines: 3,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Detail(
+              title: venueInfo['title'],
+              content: venueInfo['content'],
+              image: imageUrl ?? "",
             ),
           ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border.all(width: 1, color: Colors.grey.shade300),
+            borderRadius: const BorderRadius.all(Radius.circular(10))),
+        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (imageUrl != null)
+              Container(
+                height: MediaQuery.of(context).size.height / 4,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
+                  image: DecorationImage(
+                    image: NetworkImage(imageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+            else
+              Container(
+                height: MediaQuery.of(context).size.width / 4,
+                width: MediaQuery.of(context).size.width / 4,
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: Colors.grey,
+                ),
+                child: Image.asset(
+                  "assets/dispora.png",
+                  color: Colors.white54,
+                ),
+              ),
+            Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10)),
+                color: Colors.white,
+              ),
+              padding: const EdgeInsets.only(top: 10, left: 10, bottom: 10),
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    venueInfo['title'] ?? "",
+                    style: GoogleFonts.arimo(
+                        fontSize: 16, fontWeight: FontWeight.w700),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    date,
+                    style: GoogleFonts.arimo(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                    maxLines: 3,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

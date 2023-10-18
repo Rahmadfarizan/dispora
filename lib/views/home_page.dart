@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dispora/views/detail_widget.dart';
 import 'package:dispora/service/service_api.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
@@ -45,13 +46,19 @@ class _HomePageState extends State<HomePage> {
             if (snapshot.hasData) {
               // Check if the data is not null
               final list = snapshot.data as List;
-              final listImages = list
-                  .where((post) =>
-                      post['_embedded']['wp:featuredmedia'][0]['source_url'] !=
-                      null)
-                  .map((post) =>
-                      post['_embedded']['wp:featuredmedia'][0]['source_url'])
-                  .toList();
+              // final listImages = list
+              //     .where((post) =>
+              //         post['_embedded']['wp:featuredmedia'][0]['source_url'] !=
+              //         null)
+              //     .map((post) =>
+              //         post['_embedded']['wp:featuredmedia'][0]['source_url'])
+              //     .toList();
+
+              final listImages = [
+                "https://dispora.di-mep.com/wp-content/uploads/2023/08/98Kantor-Tenayan-scaled.jpg",
+                "https://dispora.di-mep.com/wp-content/uploads/2023/10/Slider01.jpg",
+                "https://dispora.di-mep.com/wp-content/uploads/2023/09/dispora-OPD-18-58552.jpeg"
+              ];
 
               return ListView.builder(
                 itemCount: list.length,
@@ -64,15 +71,16 @@ class _HomePageState extends State<HomePage> {
                           child: CarouselSlider(
                             items: [
                               for (final imageUrl in listImages)
-                                Container(
-                                  width: MediaQuery.of(context).size.width - 32,
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                  ),
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
                                   child: CachedNetworkImage(
+                                    width:
+                                        MediaQuery.of(context).size.width - 32,
+                                    height:
+                                        MediaQuery.of(context).size.height / 4,
                                     imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
                                     placeholder: (context, url) {
                                       return Container(
                                         width:
@@ -150,25 +158,26 @@ class _HomePageState extends State<HomePage> {
                               if (list[index]['_embedded']['wp:featuredmedia']
                                       [0]['source_url'] !=
                                   null)
-                                Container(
-                                  height: MediaQuery.of(context).size.width / 4,
-                                  width: MediaQuery.of(context).size.width / 4,
-                                  decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                  ),
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
                                   child: CachedNetworkImage(
+                                    height:
+                                        MediaQuery.of(context).size.width / 4,
+                                    width:
+                                        MediaQuery.of(context).size.width / 4,
+                                    fit: BoxFit.cover,
                                     imageUrl: list[index]['_embedded']
                                                 ['wp:featuredmedia'][0]
                                             ['source_url'] ??
                                         "",
                                     placeholder: (context, url) {
                                       return Container(
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                32,
                                         height:
-                                            MediaQuery.of(context).size.height /
+                                            MediaQuery.of(context).size.width /
+                                                4,
+                                        width:
+                                            MediaQuery.of(context).size.width /
                                                 4,
                                         decoration: BoxDecoration(
                                             borderRadius:
@@ -230,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                                           left: 10, bottom: 10),
                                       child: Text(
                                         list[index]['title']['rendered'] ?? "",
-                                        style: const TextStyle(
+                                        style: GoogleFonts.arimo(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
                                         ),
@@ -242,7 +251,7 @@ class _HomePageState extends State<HomePage> {
                                       padding: const EdgeInsets.only(left: 10),
                                       child: Text(
                                         modifyDateTime(list[index]['date']),
-                                        style: const TextStyle(
+                                        style: GoogleFonts.arimo(
                                           fontSize: 12,
                                           color: Colors.grey,
                                         ),
@@ -266,8 +275,11 @@ class _HomePageState extends State<HomePage> {
               );
             } else {
               // Handle the case where data is null
-              return const Center(
-                child: Text("No data available"),
+              return Center(
+                child: Text(
+                  "No data available",
+                  style: GoogleFonts.arimo(),
+                ),
               );
             }
           } else if (snapshot.connectionState == ConnectionState.waiting) {

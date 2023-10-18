@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:dispora/views/fasiltas_page.dart';
 import 'package:dispora/service/service_api.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:developer' as logger show log;
 
@@ -59,9 +60,8 @@ class _MyAppState extends State<MyApp> {
     return AppBar(
         titleSpacing: (_selectedIndex == 0) ? 0 : null,
         toolbarHeight: (_selectedIndex == 0) ? 100 : null,
-        backgroundColor:
-            (_selectedIndex != 2) ? Colors.white : const Color(0xff29366A),
-        elevation: 2,
+        backgroundColor: Colors.white,
+        elevation: (_selectedIndex != 2) ? 2 : null,
         shadowColor: Colors.grey.withOpacity(0.2),
         title: (_selectedIndex == 0)
             ? Column(
@@ -113,7 +113,7 @@ class _MyAppState extends State<MyApp> {
                                   ),
                                   child: Text(
                                     wpPost["name"],
-                                    style: TextStyle(
+                                    style: GoogleFonts.arimo(
                                       color: (index == 0)
                                           ? Colors.black
                                           : Colors.grey,
@@ -160,9 +160,9 @@ class _MyAppState extends State<MyApp> {
                     : (_selectedIndex == 2)
                         ? "Sosial"
                         : "Video",
-                style: TextStyle(
+                style: GoogleFonts.arimo(
                   fontSize: 20,
-                  color: Color(0xff29366A),
+                  color: Colors.black,
                   fontWeight: FontWeight.w600,
                 ),
               ));

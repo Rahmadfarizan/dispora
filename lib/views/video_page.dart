@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -57,154 +58,171 @@ class _VideoPageState extends State<VideoPage> {
             const SizedBox(
               height: 16,
             ),
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
-              child: GestureDetector(
-                onDoubleTap: () {
-                  openFullScreenVideo(context);
-                },
-                onHorizontalDragStart: (details) {
-                  final currentPosition = _youtubeController!.value.position;
-                  final backwardPosition = Duration(
-                    seconds: currentPosition.inSeconds - 1,
-                  );
-
-                  // Seek backward by 10 seconds when double-tap down
-                  _youtubeController!.seekTo(backwardPosition);
-                },
-                child: YoutubePlayer(
-                  controller: _youtubeController!,
-                  showVideoProgressIndicator: true,
-                  onEnded: (metadata) {
-                    // Handle video end
-                  },
-                  bottomActions: [
-                    CurrentPosition(),
-                    const SizedBox(width: 10.0),
-                    ProgressBar(isExpanded: true),
-                    const SizedBox(width: 10.0),
-                    RemainingDuration(),
-                    const SizedBox(
-                      width: 10,
+            Container(
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: Colors.grey.shade300),
+                  borderRadius: const BorderRadius.all(Radius.circular(10))),
+              child: Column(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
                     ),
-                    InkWell(
-                      onTap: () {
+                    child: GestureDetector(
+                      onDoubleTap: () {
                         openFullScreenVideo(context);
                       },
-                      child: const Icon(
-                        Icons.fullscreen,
-                        color: Colors.white,
+                      onHorizontalDragStart: (details) {
+                        final currentPosition =
+                            _youtubeController!.value.position;
+                        final backwardPosition = Duration(
+                          seconds: currentPosition.inSeconds - 1,
+                        );
+
+                        // Seek backward by 10 seconds when double-tap down
+                        _youtubeController!.seekTo(backwardPosition);
+                      },
+                      child: YoutubePlayer(
+                        controller: _youtubeController!,
+                        showVideoProgressIndicator: true,
+                        onEnded: (metadata) {
+                          // Handle video end
+                        },
+                        bottomActions: [
+                          CurrentPosition(),
+                          const SizedBox(width: 10.0),
+                          ProgressBar(isExpanded: true),
+                          const SizedBox(width: 10.0),
+                          RemainingDuration(),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              openFullScreenVideo(context);
+                            },
+                            child: const Icon(
+                              Icons.fullscreen,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            FutureBuilder<Map<String, dynamic>>(
-              future: fetchYouTubeVideoInfo('https://youtu.be/57MOJrjCev0'),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Colors.white,
-                    ),
-                    child: Shimmer.fromColors(
-                      baseColor: Colors.grey.shade300,
-                      highlightColor: Colors.grey.shade100,
-                      enabled: true,
-                      child: Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width,
+                  ),
+                  FutureBuilder<Map<String, dynamic>>(
+                    future:
+                        fetchYouTubeVideoInfo('https://youtu.be/57MOJrjCev0'),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: Colors.white,
+                          ),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.grey.shade100,
+                            enabled: true,
+                            child: Container(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 10, right: 10, bottom: 10),
-                                    height: 16,
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                      color: Colors.white,
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                              left: 10, right: 10, bottom: 10),
+                                          height: 16,
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10),
+                                            ),
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                          ),
+                                          height: 12,
+                                          width: 120,
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10),
+                                            ),
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    height: 12,
-                                    width: 120,
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                      color: Colors.white,
-                                    ),
+                                  SizedBox(
+                                    height: 10,
                                   ),
                                 ],
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final videoInfo = snapshot.data;
-                  return Container(
-                    padding: const EdgeInsets.all(10),
-                    width: MediaQuery.of(context).size.width,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10)),
-                      color: Colors.white,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          videoInfo!['title'],
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          videoInfo['author_name'],
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
-                          maxLines: 3,
-                        ),
-                        // Add more information as needed
-                      ],
-                    ),
-                  );
-                }
-              },
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        final videoInfo = snapshot.data;
+                        return Container(
+                          padding: const EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10)),
+                            color: Colors.white,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                videoInfo!['title'],
+                                style: GoogleFonts.arimo(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                videoInfo['author_name'],
+                                style: GoogleFonts.arimo(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                                maxLines: 3,
+                              ),
+                              // Add more information as needed
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),

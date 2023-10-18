@@ -1,3 +1,4 @@
+import 'package:dispora/views/sarpras_widget.dart';
 import 'package:flutter/material.dart';
 
 class SosialPage extends StatelessWidget {
@@ -10,17 +11,22 @@ class SosialPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0,
-          bottom: TabBar(
+          backgroundColor: Colors.white,
+          bottom: const TabBar(
+            labelColor: Colors.black,
+            physics: NeverScrollableScrollPhysics(),
             tabs: [
               Tab(text: 'Tab 1'),
               Tab(text: 'Tab 2'),
             ],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: [
             Center(child: Text('Tab 1 Content')),
-            Center(child: Text('Tab 2 Content')),
+            // Center(child: Text('Tab 1 Content')),
+            SarprasWidget(),
           ],
         ),
       ),
