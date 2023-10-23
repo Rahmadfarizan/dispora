@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dispora/views/sarpras_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -171,12 +172,23 @@ class _DetailState extends State<Detail> {
                     const SizedBox(
                       height: 20, //jarak antara judul dan konten
                     ),
-                    HtmlWidget(
-                      modifiedHtmlString,
-                      textStyle: GoogleFonts.arimo(
-                        fontSize: 16,
-                      ), //teks html diubah menjadi teks yang bisa dibaca
-                    ),
+                    (modifiedHtmlString.contains("www.google.com/maps"))
+                        ? SingleChildScrollView(
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height / 2,
+                              width: MediaQuery.of(context).size.width,
+                              child: SarprasWidget(
+                                link:
+                                    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4919.56786220599!2d101.38476387582705!3d0.4749816637614036!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5a855ec651789%3A0x222d619462f3b35b!2sStadion%20Mini%20Universitas%20Riau!5e1!3m2!1sid!2sid!4v1697657709947!5m2!1sid!2sid",
+                              ),
+                            ),
+                          )
+                        : HtmlWidget(
+                            modifiedHtmlString,
+                            textStyle: GoogleFonts.arimo(
+                              fontSize: 16,
+                            ), //teks html diubah menjadi teks yang bisa dibaca
+                          ),
                   ],
                 ),
               ),

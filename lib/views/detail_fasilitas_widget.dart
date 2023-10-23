@@ -1,8 +1,10 @@
+import 'package:dispora/views/list_fasilitas_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../service/service_api.dart';
+import 'dart:developer' as logger show log;
 
 class DetailFasilitasWidget extends StatefulWidget {
   final String kecamatan;
@@ -16,6 +18,20 @@ class _DetailFasilitasWidgetState extends State<DetailFasilitasWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.white,
+        elevation: 1,
+        shadowColor: Colors.grey.shade100,
+        title: Text(
+          widget.kecamatan,
+          style: GoogleFonts.arimo(
+            fontSize: 20,
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
       body: FutureBuilder(
         future: fetchFasilitas(),
         builder: (_, snapshot) {
@@ -99,43 +115,73 @@ class _DetailFasilitasWidgetState extends State<DetailFasilitasWidget> {
 
                 return (containsStringB &&
                         lowerA.toLowerCase().contains("lapangan"))
-                    ? Row(
-                        children: [
-                          (image.isNotEmpty)
-                              ? Image.network(
-                                  image,
-                                  height: MediaQuery.of(context).size.width / 4,
-                                  width: MediaQuery.of(context).size.width / 4,
-                                )
-                              : Container(
-                                  padding: const EdgeInsets.all(10),
-                                  height: MediaQuery.of(context).size.width / 4,
-                                  width: MediaQuery.of(context).size.width / 4,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10)),
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  child: Image.asset(
-                                    "assets/logodispora.png",
-                                    color: Colors.white,
-                                  ),
-                                ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Text(
-                              list[index]["title"]["rendered"].toString(),
-                              style: GoogleFonts.arimo(
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.normal),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
+                    ? InkWell(
+                        onTap: () {
+                          logger.log(
+                              "linkImage => ${list[index]["_links"]["wp:attachment"][0]["href"]}");
+                          logger.log(
+                              "linkContent => ${list[index]["_links"]["self"][0]["href"]}");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListFasilitasWidget(
+                                linkImage: list[index]["_links"]
+                                    ["wp:attachment"][0]["href"],
+                                linkContent: list[index]["_links"]["self"][0]
+                                    ["href"],
+                                title: list[index]["title"]["rendered"],
+                              ),
                             ),
-                          ),
-                        ],
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            (image.isNotEmpty)
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Image.network(
+                                      image,
+                                      height:
+                                          MediaQuery.of(context).size.width / 4,
+                                      width:
+                                          MediaQuery.of(context).size.width / 4,
+                                    ),
+                                  )
+                                : Container(
+                                    padding: const EdgeInsets.all(10),
+                                    height:
+                                        MediaQuery.of(context).size.width / 4,
+                                    width:
+                                        MediaQuery.of(context).size.width / 4,
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10)),
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    child: Image.asset(
+                                      "assets/logodispora.png",
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 16),
+                                child: Text(
+                                  list[index]["title"]["rendered"],
+                                  style: GoogleFonts.arimo(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       )
                     : SizedBox.shrink();
               },

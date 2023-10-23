@@ -1,38 +1,27 @@
-import 'package:dispora/views/detail_fasilitas_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import '../models/venue_model.dart';
-import '../service/service_api.dart';
 import 'detail_widget.dart';
 import 'dart:developer' as logger show log;
 
-class FasilitasPage extends StatefulWidget {
-  const FasilitasPage({super.key});
+class ListFasilitasWidget extends StatefulWidget {
+  final String linkImage;
+  final String linkContent;
+  final String title;
+  const ListFasilitasWidget({
+    super.key,
+    required this.linkImage,
+    required this.linkContent,
+    required this.title,
+  });
 
   @override
-  State<FasilitasPage> createState() => _FasilitasPageState();
+  State<ListFasilitasWidget> createState() => _ListFasilitasWidgetState();
 }
 
-class _FasilitasPageState extends State<FasilitasPage> {
+class _ListFasilitasWidgetState extends State<ListFasilitasWidget> {
   final model = VenueModel();
-
-  List<String> listKecamatan = [
-    "Bina widya",
-    "Sail",
-    "Bukit Raya",
-    "Marpoyan Damai",
-    "Kulim",
-    "Pekanbaru Kota",
-    "Rumbai",
-    "Payung Sekaki",
-    "Rumbai Barat",
-    "Tenayan Raya",
-    "Tuah Madani",
-    "Sukajadi",
-    "Senapelan",
-    "Lima Puluh"
-  ];
 
   @override
   void initState() {
@@ -42,8 +31,8 @@ class _FasilitasPageState extends State<FasilitasPage> {
 
   Future<void> loadData() async {
     try {
-      await model.fetchVenueData("");
-      await model.fetchDetailVenueData("");
+      await model.fetchVenueData(widget.linkImage);
+      await model.fetchDetailVenueData(widget.linkContent);
     } catch (e) {
       logger.log('Error: $e');
     }
@@ -72,144 +61,41 @@ class _FasilitasPageState extends State<FasilitasPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: listKecamatan.length,
-      itemBuilder: (context, index) {
-        // Use a Column to add a Divider below each item except the last one.
-        return Column(
-          children: <Widget>[
-            if (index == 0)
-              SizedBox(
-                height: 10,
-              ), // A
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetailFasilitasWidget(
-                      kecamatan: listKecamatan[index],
-                    ),
-                  ),
-                );
-              },
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(
-                    left: 16, right: 16, top: 8, bottom: 8),
-                child: Text(
-                  "Kecamatan ${listKecamatan[index]}",
-                  style: GoogleFonts.arimo(
-                      fontSize: 16, fontWeight: FontWeight.w500),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-            ),
-            if (index < listKecamatan.length - 1)
-              Divider(), // Add a Divider unless it's the last item
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildListKecamatan(List list) {
-    // Create a list of unique Kecamatan names
-    List<String> uniqueKecamatanNames = [];
-
-    for (int index = 0; index < listKecamatan.length; index++) {
-      String kecamatanName = listKecamatan[index].toLowerCase();
-
-      if (!uniqueKecamatanNames.contains(kecamatanName)) {
-        uniqueKecamatanNames.add(kecamatanName);
-      }
-    }
-
-    return ListView(
-      children: uniqueKecamatanNames.map((kecamatanName) {
-        return _buildKecamatanItem(kecamatanName, list);
-      }).toList(),
-    );
-  }
-
-  Widget _buildKecamatanItem(String kecamatanName, List list) {
-    List<Widget> kecamatanWidgets = [];
-
-    for (int i = 0; i < list.length; i++) {
-      String title = "";
-      String content = "";
-      String image = "";
-      String lowerA = list[i]["title"]["rendered"].toLowerCase();
-      String lowerB = kecamatanName.toLowerCase();
-
-      // Check if string A contains string B
-      bool containsStringB = lowerA.contains(lowerB);
-
-      if (containsStringB) {
-        title = list[i]["title"]["rendered"];
-        content = list[i]["content"]["rendered"];
-        if (list[i]["_links"]["wp:attachment"] != null &&
-            list[i]["_links"]["wp:attachment"].isNotEmpty) {
-          image = list[i]["_links"]["wp:attachment"][0]["href"];
-        }
-      }
-
-      kecamatanWidgets.add(_buildKecamatanDetail(title, content, image));
-    }
-
-    return Column(
-      children: <Widget>[
-        Text("Kecamatan $kecamatanName",
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        Column(children: kecamatanWidgets),
-      ],
-    );
-  }
-
-  Widget _buildKecamatanDetail(String title, String content, String image) {
-    // Check the image data and handle it here
-    if (image != null && image.isNotEmpty) {
-      return FutureBuilder(
-        future: fetchFasilitasImage(image),
-        builder: (context, snapshot) {
+    return Scaffold(
+      appBar: AppBar(
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.white,
+        elevation: 1,
+        shadowColor: Colors.grey.shade100,
+        title: Text(
+          widget.title,
+          style: GoogleFonts.arimo(
+            fontSize: 20,
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      body: FutureBuilder(
+        future: model.fetchVenueData(widget.linkImage),
+        builder: (_, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildLoadingListWidget();
-          } else if (snapshot.hasData) {
-            final data = snapshot.data;
-            return InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Detail(
-                      title: title,
-                      content: content,
-                      image: data["source_url"] ?? "",
-                    ),
-                  ),
-                );
-              },
-              child: ListTile(
-                title: Text(title),
-                // You can add other widgets here as needed.
-              ),
-            );
+            return _buildLoadingWidget();
           } else if (snapshot.hasError) {
-            return Text(
-              "Tidak Ditemukan",
-              style: GoogleFonts.arimo(),
-            );
+            return const Center(child: Text("Error: Tidak Ditemukan"));
           } else {
-            return const SizedBox.shrink();
+            final list = snapshot.data as List;
+
+            if (list.isEmpty) {
+              // Handle the case when the data is empty.
+              return const Center(child: Text("Belum ada data Fasilitas"));
+            } else {
+              return _buildVenueList(list);
+            }
           }
         },
-      );
-    } else {
-      return ListTile(
-        title: Text(title),
-        // You can add other widgets here as needed for items without images.
-      );
-    }
+      ),
+    );
   }
 
   Widget _buildLoadingWidget() {
@@ -305,13 +191,13 @@ class _FasilitasPageState extends State<FasilitasPage> {
       itemCount: list.length,
       itemBuilder: (context, index) {
         return FutureBuilder(
-          future: model.fetchDetailVenueData(""),
+          future: model.fetchDetailVenueData(widget.linkContent),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return _buildLoadingListWidget();
             } else if (snapshot.hasData) {
               final data = snapshot.data;
-              final venueInfo = _extractVenueInfo(data, list[index]['id']);
+              final venueInfo = _extractVenueInfo(data, list[index]['slug']);
               return _buildVenueItem(
                 venueInfo,
                 list[index]['guid']['rendered'],
@@ -323,7 +209,9 @@ class _FasilitasPageState extends State<FasilitasPage> {
                 style: GoogleFonts.arimo(),
               );
             } else {
-              return const SizedBox.shrink();
+              return const Center(
+                child: Text("Belum ada data Fasilitas"),
+              );
             }
           },
         );
@@ -331,11 +219,12 @@ class _FasilitasPageState extends State<FasilitasPage> {
     );
   }
 
-  Map<String, String> _extractVenueInfo(dynamic data, int id) {
+  Map<String, String> _extractVenueInfo(dynamic data, String slug) {
     String title = "";
     String content = "";
     for (int i = 0; i < data!.length; i++) {
-      if (data[i]["featured_media"] == id) {
+      logger.log("test => ${data[i]["featured_media"]}");
+      if (data[i]["slug"] == slug) {
         title = data[i]["title"]["rendered"];
         content = data[i]["content"]["rendered"];
       }

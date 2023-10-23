@@ -57,9 +57,10 @@ Future fetchFasilitasImage(String href) async {
   }
 }
 
-Future<List?> fetchWpVenue() async {
-  final Uri url = Uri.parse(
-      "https://dispora.pekanbaru.go.id/wp-json/wp/v2/media?parent=6631");
+Future<List?> fetchWpVenue(String link) async {
+  // final Uri url = Uri.parse(
+  //     "https://dispora.pekanbaru.go.id/wp-json/wp/v2/media?parent=6631");
+  final Uri url = Uri.parse(link);
   try {
     final response =
         await http.get(url, headers: {"Accept": "application/json"});
@@ -99,9 +100,12 @@ Future<List?> fetchFasilitas() async {
   }
 }
 
-Future<List?> fetchWpDetailVenue() async {
-  final Uri url =
-      Uri.parse("https://dispora.pekanbaru.go.id/wp-json/wp/v2/pages?_embed");
+Future<List?> fetchWpDetailVenue(String link) async {
+  // final Uri url =
+  //     Uri.parse("https://dispora.pekanbaru.go.id/wp-json/wp/v2/pages?_embed");
+
+  final Uri url = Uri.parse(
+      "https://dispora.pekanbaru.go.id/wp-json/wp/v2/pages?per_page=100&parent=0&_embed");
   try {
     final response =
         await http.get(url, headers: {"Accept": "application/json"});
