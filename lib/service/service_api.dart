@@ -7,7 +7,7 @@ Future<List?> fetchWpPosts(categoryPost) async {
   // final Uri url =
   //     Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/posts?_embed");
   final Uri url = Uri.parse(
-      "https://dispora.di-mep.com/wp-json/wp/v2/posts?_embed&categories=$categoryPost");
+      "https://dispora.pekanbaru.go.id/wp-json/wp/v2/posts?_embed&categories=$categoryPost");
   try {
     final response =
         await http.get(url, headers: {"Accept": "application/json"});
@@ -40,9 +40,26 @@ Future fetchWpPostImage(String href) async {
   }
 }
 
+Future fetchFasilitasImage(String href) async {
+  final Uri url = Uri.parse(href);
+  try {
+    final response =
+        await http.get(url, headers: {"Accept": "application/json"});
+
+    if (response.statusCode == 200) {
+      var convertedDatatoJson = jsonDecode(response.body);
+      return convertedDatatoJson;
+    } else {
+      throw Exception('Failed to load post image: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Exception('Failed to load post image: $e');
+  }
+}
+
 Future<List?> fetchWpVenue() async {
-  final Uri url =
-      Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/media?parent=6631");
+  final Uri url = Uri.parse(
+      "https://dispora.pekanbaru.go.id/wp-json/wp/v2/media?parent=6631");
   try {
     final response =
         await http.get(url, headers: {"Accept": "application/json"});
@@ -50,7 +67,7 @@ Future<List?> fetchWpVenue() async {
     if (response.statusCode == 200) {
       var convertedDatatoJson = jsonDecode(response.body);
       if (kDebugMode) {
-        logger.log("fetchWpVenue => $convertedDatatoJson");
+        //logger.log("fetchWpVenue => $convertedDatatoJson");
       }
       return convertedDatatoJson;
     } else {
@@ -61,9 +78,9 @@ Future<List?> fetchWpVenue() async {
   }
 }
 
-Future<List?> fetchWpDetailVenue() async {
-  final Uri url =
-      Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/pages?_embed");
+Future<List?> fetchFasilitas() async {
+  final Uri url = Uri.parse(
+      "https://dispora.pekanbaru.go.id/wp-json/wp/v2/pages?per_page=100&parent=0&_embed");
   try {
     final response =
         await http.get(url, headers: {"Accept": "application/json"});
@@ -71,7 +88,28 @@ Future<List?> fetchWpDetailVenue() async {
     if (response.statusCode == 200) {
       var convertedDatatoJson = jsonDecode(response.body);
       if (kDebugMode) {
-        logger.log("fetchWpVenue => $convertedDatatoJson");
+        logger.log("fetchFasilitas => $convertedDatatoJson");
+      }
+      return convertedDatatoJson;
+    } else {
+      throw Exception('Failed to load fasiitas: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Exception('Failed to load fasilitas: $e');
+  }
+}
+
+Future<List?> fetchWpDetailVenue() async {
+  final Uri url =
+      Uri.parse("https://dispora.pekanbaru.go.id/wp-json/wp/v2/pages?_embed");
+  try {
+    final response =
+        await http.get(url, headers: {"Accept": "application/json"});
+
+    if (response.statusCode == 200) {
+      var convertedDatatoJson = jsonDecode(response.body);
+      if (kDebugMode) {
+        //logger.log("fetchWpVenue => $convertedDatatoJson");
       }
       return convertedDatatoJson;
     } else {
@@ -83,7 +121,8 @@ Future<List?> fetchWpDetailVenue() async {
 }
 
 Future<List?> fetchWpMedia() async {
-  final Uri url = Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/media");
+  final Uri url =
+      Uri.parse("https://dispora.pekanbaru.go.id/wp-json/wp/v2/media");
   try {
     final response =
         await http.get(url, headers: {"Accept": "application/json"});
@@ -91,7 +130,7 @@ Future<List?> fetchWpMedia() async {
     if (response.statusCode == 200) {
       var convertedDatatoJson = jsonDecode(response.body);
       if (kDebugMode) {
-        logger.log("fetchWpMedia => $convertedDatatoJson");
+        //logger.log("fetchWpMedia => $convertedDatatoJson");
       }
       return convertedDatatoJson;
     } else {
@@ -120,8 +159,8 @@ Future fetchWpPostCategory(String href) async {
 }
 
 Future fetchWpCategory() async {
-  final Uri url =
-      Uri.parse("https://dispora.di-mep.com/wp-json/wp/v2/categories?_embed");
+  final Uri url = Uri.parse(
+      "https://dispora.pekanbaru.go.id/wp-json/wp/v2/categories?_embed");
   try {
     final response =
         await http.get(url, headers: {"Accept": "application/json"});

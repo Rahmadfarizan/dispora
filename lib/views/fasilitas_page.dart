@@ -1,7 +1,9 @@
+import 'package:dispora/views/detail_fasilitas_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import '../models/venue_model.dart';
+import '../service/service_api.dart';
 import 'detail_widget.dart';
 import 'dart:developer' as logger show log;
 
@@ -14,6 +16,23 @@ class FasilitasPage extends StatefulWidget {
 
 class _FasilitasPageState extends State<FasilitasPage> {
   final model = VenueModel();
+
+  List<String> listKecamatan = [
+    "Bina widya",
+    "Sail",
+    "Bukit Raya",
+    "Marpoyan Damai",
+    "Kulim",
+    "Pekanbaru Kota",
+    "Rumbai",
+    "Payung Sekaki",
+    "Rumbai Barat",
+    "Tenayan Raya",
+    "Tuah Madani",
+    "Sukajadi",
+    "Senapelan",
+    "Lima Puluh"
+  ];
 
   @override
   void initState() {
@@ -53,19 +72,125 @@ class _FasilitasPageState extends State<FasilitasPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: model.fetchVenueData(),
-      builder: (_, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingWidget();
-        } else if (snapshot.hasError) {
-          return const Center(child: Text("Error: Tidak Ditemukan"));
-        } else {
-          final list = snapshot.data as List;
-          return _buildVenueList(list);
-        }
-      },
+    return ListView.builder(
+        itemCount: listKecamatan.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailFasilitasWidget(
+                    kecamatan: listKecamatan[index],
+                  ),
+                ),
+              );
+            },
+            child: Container(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+                child: Text(listKecamatan[index])),
+          );
+        });
+  }
+
+  Widget _buildListKecamatan(List list) {
+    // Create a list of unique Kecamatan names
+    List<String> uniqueKecamatanNames = [];
+
+    for (int index = 0; index < listKecamatan.length; index++) {
+      String kecamatanName = listKecamatan[index].toLowerCase();
+
+      if (!uniqueKecamatanNames.contains(kecamatanName)) {
+        uniqueKecamatanNames.add(kecamatanName);
+      }
+    }
+
+    return ListView(
+      children: uniqueKecamatanNames.map((kecamatanName) {
+        return _buildKecamatanItem(kecamatanName, list);
+      }).toList(),
     );
+  }
+
+  Widget _buildKecamatanItem(String kecamatanName, List list) {
+    List<Widget> kecamatanWidgets = [];
+
+    for (int i = 0; i < list.length; i++) {
+      String title = "";
+      String content = "";
+      String image = "";
+      String lowerA = list[i]["title"]["rendered"].toLowerCase();
+      String lowerB = kecamatanName.toLowerCase();
+
+      // Check if string A contains string B
+      bool containsStringB = lowerA.contains(lowerB);
+
+      if (containsStringB) {
+        title = list[i]["title"]["rendered"];
+        content = list[i]["content"]["rendered"];
+        if (list[i]["_links"]["wp:attachment"] != null &&
+            list[i]["_links"]["wp:attachment"].isNotEmpty) {
+          image = list[i]["_links"]["wp:attachment"][0]["href"];
+        }
+      }
+
+      kecamatanWidgets.add(_buildKecamatanDetail(title, content, image));
+    }
+
+    return Column(
+      children: <Widget>[
+        Text("Kecamatan $kecamatanName",
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        Column(children: kecamatanWidgets),
+      ],
+    );
+  }
+
+  Widget _buildKecamatanDetail(String title, String content, String image) {
+    // Check the image data and handle it here
+    if (image != null && image.isNotEmpty) {
+      return FutureBuilder(
+        future: fetchFasilitasImage(image),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _buildLoadingListWidget();
+          } else if (snapshot.hasData) {
+            final data = snapshot.data;
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Detail(
+                      title: title,
+                      content: content,
+                      image: data["source_url"] ?? "",
+                    ),
+                  ),
+                );
+              },
+              child: ListTile(
+                title: Text(title),
+                // You can add other widgets here as needed.
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Text(
+              "Tidak Ditemukan",
+              style: GoogleFonts.arimo(),
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      );
+    } else {
+      return ListTile(
+        title: Text(title),
+        // You can add other widgets here as needed for items without images.
+      );
+    }
   }
 
   Widget _buildLoadingWidget() {
