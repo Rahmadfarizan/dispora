@@ -74,15 +74,14 @@ class _DetailState extends State<Detail> {
       String? long = match.group(1);
       String? lat = match.group(2);
 
-      latitude = double.parse(lat!).toPrecision(7);
-      longitude = double.parse(long!).toPrecision(7);
+      latitude = double.parse(lat!);
+      longitude = double.parse(long!);
 
       logger.log("Latitude: $latitude");
       logger.log("Longitude: $longitude");
     } else {
       logger.log("No matching latitude and longitude in iframeCode.");
     }
-    logger.log("test");
 
     return Scaffold(
       appBar: AppBar(
@@ -253,8 +252,4 @@ class _DetailState extends State<Detail> {
       ),
     );
   }
-}
-
-extension Ex on double {
-  double toPrecision(int n) => double.parse(toStringAsFixed(n));
 }
