@@ -3,9 +3,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class SarprasWidget extends StatefulWidget {
-  final String? link;
-  const SarprasWidget({this.link});
-
   @override
   _SarprasWidgetState createState() => _SarprasWidgetState();
 }
@@ -77,7 +74,7 @@ class _SarprasWidgetState extends State<SarprasWidget> {
           );
         },
       )
-      ..loadRequest(Uri.parse(widget.link ??
+      ..loadRequest(Uri.parse(
           'https://sarpras-eporabertuah.pekanbaru.go.id/PetaSarpras'));
 
     _controller = controller;

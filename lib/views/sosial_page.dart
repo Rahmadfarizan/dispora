@@ -37,7 +37,7 @@ class SosialPage extends StatelessWidget {
         body: TabBarView(
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            const SarprasWidget(),
+            SarprasWidget(),
             _buildWidgetComingSoon(
                 "https://dispora.pekanbaru.go.id/wp-content/uploads/2023/08/stadium-150x150.png",
                 'E-Booking',

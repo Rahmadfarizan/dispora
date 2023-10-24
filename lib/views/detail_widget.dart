@@ -1,8 +1,12 @@
+import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dispora/views/sarpras_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:latlong2/latlong.dart';
+import 'dart:developer' as logger show log;
 
 class Detail extends StatefulWidget {
   final String? title;
@@ -21,9 +25,10 @@ class Detail extends StatefulWidget {
 }
 
 class _DetailState extends State<Detail> {
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   bool _showTitle = false;
   double opacity = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -49,9 +54,35 @@ class _DetailState extends State<Detail> {
     super.dispose();
   }
 
+  static const double pointSize = 65;
+
+  final mapController = MapController();
+
+  LatLng? tappedCoords;
+  Point<double>? tappedPoint;
+
+  RegExp regex = RegExp(r'src="([^"]+)"');
+
   @override
   Widget build(BuildContext context) {
     String modifiedHtmlString = widget.content!.replaceAll('data-src', 'src');
+    RegExp regex = RegExp(r"!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)");
+    RegExpMatch? match = regex.firstMatch(modifiedHtmlString);
+    double? latitude;
+    double? longitude;
+    if (match != null) {
+      String? long = match.group(1);
+      String? lat = match.group(2);
+
+      latitude = double.parse(lat!).toPrecision(7);
+      longitude = double.parse(long!).toPrecision(7);
+
+      logger.log("Latitude: $latitude");
+      logger.log("Longitude: $longitude");
+    } else {
+      logger.log("No matching latitude and longitude in iframeCode.");
+    }
+    logger.log("test");
 
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +92,6 @@ class _DetailState extends State<Detail> {
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // Add the app bar to the CustomScrollView.
           SliverAppBar(
             automaticallyImplyLeading: false,
             elevation: 2,
@@ -71,22 +101,18 @@ class _DetailState extends State<Detail> {
                 Navigator.pop(context);
               },
               child: Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xff29366A).withOpacity(0.8),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  )),
+                margin: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xff29366A).withOpacity(0.8),
+                ),
+                child: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
+              ),
             ),
-            // Provide a standard title.
-
-            // Allows the user to reveal the app bar if they begin scrolling
-            // back up the list of items.
-
             title: _showTitle
                 ? Text(
                     "Poradi Pekanbaru",
@@ -99,11 +125,9 @@ class _DetailState extends State<Detail> {
             floating: false,
             pinned: true,
             backgroundColor: Colors.white,
-            // Display a placeholder widget to visualize the shrinking size.
             flexibleSpace: Stack(
               alignment: AlignmentDirectional.topStart,
               children: [
-                /// untuk pages dan posts
                 if (widget.image != "")
                   CachedNetworkImage(
                     width: MediaQuery.of(context).size.width,
@@ -118,7 +142,6 @@ class _DetailState extends State<Detail> {
                       );
                     },
                     errorWidget: (context, url, error) {
-                      // Menampilkan gambar pengganti jika URL mengembalikan kode status 404.
                       return Container(
                         width: double.infinity,
                         height: MediaQuery.of(context).size.height * 0.33,
@@ -130,12 +153,12 @@ class _DetailState extends State<Detail> {
                           "assets/logodispora.png",
                           color: Colors.white,
                         ),
-                      ); // Ganti dengan placeholder yang sesuai.
+                      );
                     },
                   ),
                 if (widget.image != "")
                   AnimatedContainer(
-                    duration: Duration(seconds: 2), // Durasi animasi
+                    duration: const Duration(seconds: 2),
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.33,
                     color: _showTitle
@@ -144,42 +167,73 @@ class _DetailState extends State<Detail> {
                   ),
               ],
             ),
-
-            // Make the initial height of the SliverAppBar larger than normal.
             expandedHeight:
                 widget.image != "" ? MediaQuery.of(context).size.height / 3 : 0,
           ),
-          // Next, create a SliverList
           SliverList(
-            // Use a delegate to build items as they're scrolled on screen.
             delegate: SliverChildBuilderDelegate(
-              // The builder function returns a ListTile with a title that
-              // displays the index of the current item.
               (context, index) => Padding(
                 padding: const EdgeInsets.only(
                     left: 16, right: 16, top: 16, bottom: 16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment
-                      .start, //semua konten dimulai dari sebelah kiri
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.title!, //menampilkan judul
+                      widget.title!,
                       style: GoogleFonts.arimo(
-                        fontSize: 22, //ukuran huruf
-                        fontWeight: FontWeight.w600, //ketebalan huruf
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(
-                      height: 20, //jarak antara judul dan konten
+                      height: 20,
                     ),
                     (modifiedHtmlString.contains("www.google.com/maps"))
-                        ? SingleChildScrollView(
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
                             child: SizedBox(
                               height: MediaQuery.of(context).size.height / 2,
                               width: MediaQuery.of(context).size.width,
-                              child: SarprasWidget(
-                                link:
-                                    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4919.56786220599!2d101.38476387582705!3d0.4749816637614036!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5a855ec651789%3A0x222d619462f3b35b!2sStadion%20Mini%20Universitas%20Riau!5e1!3m2!1sid!2sid!4v1697657709947!5m2!1sid!2sid",
+                              child: FlutterMap(
+                                mapController: mapController,
+                                options: MapOptions(
+                                  initialCenter: LatLng(latitude ?? -6.8995722,
+                                      longitude ?? 107.6097063),
+                                  initialZoom: 16,
+                                  interactionOptions: const InteractionOptions(
+                                    flags: ~InteractiveFlag.doubleTapZoom,
+                                  ),
+                                  onTap: (_, latLng) {
+                                    final point = mapController.camera
+                                        .latLngToScreenPoint(
+                                            tappedCoords = latLng);
+                                    setState(() =>
+                                        tappedPoint = Point(point.x, point.y));
+                                  },
+                                ),
+                                children: [
+                                  TileLayer(
+                                    urlTemplate:
+                                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                    userAgentPackageName:
+                                        'dev.fleaflet.flutter_map.example',
+                                  ),
+                                  MarkerLayer(
+                                    markers: [
+                                      Marker(
+                                        width: pointSize,
+                                        height: pointSize,
+                                        point: LatLng(latitude ?? -6.8995722,
+                                            longitude ?? 107.6097063),
+                                        child: const Icon(
+                                          Icons.location_on,
+                                          color: Colors.red,
+                                          size: 60,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           )
@@ -187,12 +241,11 @@ class _DetailState extends State<Detail> {
                             modifiedHtmlString,
                             textStyle: GoogleFonts.arimo(
                               fontSize: 16,
-                            ), //teks html diubah menjadi teks yang bisa dibaca
+                            ),
                           ),
                   ],
                 ),
               ),
-              // Builds 1000 ListTiles
               childCount: 1,
             ),
           ),
@@ -200,4 +253,8 @@ class _DetailState extends State<Detail> {
       ),
     );
   }
+}
+
+extension Ex on double {
+  double toPrecision(int n) => double.parse(toStringAsFixed(n));
 }
