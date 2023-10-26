@@ -1,22 +1,26 @@
+import 'package:dispora/features/home/presentation/provider/home_provider.dart';
+
+import 'features/fasilitas/presentation/provider/fasilitas_provider.dart';
+import 'package:provider/provider.dart';
+
+import 'features/home/service/home_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:developer' as logger show log;
-import 'package:dispora/views/home_page.dart';
-import 'package:dispora/views/sosial_page.dart';
-import 'package:dispora/views/video_page.dart';
-import 'package:dispora/views/fasilitas_page.dart';
-import 'package:dispora/service/service_api.dart';
+import 'features/home/presentation/screen/home_screen.dart';
+import 'features/sosial/presentation/screen/sosial_page.dart';
+import 'features/video/presentation/screen/video_page.dart';
+import 'features/fasilitas/presentation/screen/fasilitas_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: MyApp(),
-  ));
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -42,7 +46,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    fetchWpCategory().then((snapshot) {
+    HomeServiceApi().fetchWpCategory().then((snapshot) {
       if (snapshot.isNotEmpty) {
         setState(() {
           _categories = snapshot;
@@ -63,10 +67,20 @@ class _MyAppState extends State<MyApp> {
       const VideoPage(),
     ];
 
-    return Scaffold(
-      appBar: buildAppBar(),
-      body: pages[_selectedIndex],
-      bottomNavigationBar: buildBottomBar(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
+        ChangeNotifierProvider<FasilitasProvider>(
+            create: (_) => FasilitasProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          appBar: buildAppBar(),
+          body: pages[_selectedIndex],
+          bottomNavigationBar: buildBottomBar(),
+        ),
+      ),
     );
   }
 
@@ -106,7 +120,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 const SizedBox(height: 10),
                 FutureBuilder(
-                  future: fetchWpCategory(),
+                  future: HomeServiceApi().fetchWpCategory(),
                   builder: (context, snapshot) {
                     if (_isLoading) {
                       // Menampilkan loading indicator

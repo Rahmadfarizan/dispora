@@ -1,12 +1,12 @@
+import 'dart:developer' as logger show log;
 import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
-import 'dart:developer' as logger show log;
 
 class Detail extends StatefulWidget {
   final String? title;

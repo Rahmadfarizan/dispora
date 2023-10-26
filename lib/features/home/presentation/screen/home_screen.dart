@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dispora/views/detail_widget.dart';
-import 'package:dispora/service/service_api.dart';
+import 'package:dispora/features/home/model/home_model.dart';
+import 'package:dispora/features/home/presentation/provider/home_provider.dart';
+import 'package:provider/provider.dart';
+import '../widgets/detail_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'dart:developer' as logger show log;
+
+import '../../service/home_service.dart';
 
 class HomePage extends StatefulWidget {
   int categoryPost;
@@ -18,15 +22,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String modifyDateTime(String originalDateTime) {
-    // Parse the original date from the string
     DateTime parsedDateTime = DateTime.parse(originalDateTime);
-
-    // Calculate the time difference between the current time and the original time
     Duration difference = DateTime.now().difference(parsedDateTime);
 
     if (difference.inDays >= 7) {
       int weeks = (difference.inDays / 7).floor();
-      return "${weeks} minggu yang lalu";
+      return "$weeks minggu yang lalu";
     } else if (difference.inDays >= 1) {
       return "${difference.inDays} hari yang lalu";
     } else if (difference.inHours >= 1) {
@@ -38,13 +39,38 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<List<Berita>>? futureLoadBerita;
+
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLoading = true;
+
+    Future.wait([
+      context.read<HomeProvider>().loadBerita(widget.categoryPost),
+    ]).then((results) {
+      futureLoadBerita = results[0] as Future<List<Berita>>?;
+      setState(() {
+        _isLoading = false;
+      });
+    }).catchError((error) {
+      // Handle errors if any of the futures fail
+      logger.log(error.toString());
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     logger.log("cek Category =>${widget.categoryPost}");
     return Container(
       color: const Color(0xffF9F7F7),
       child: FutureBuilder(
-        future: fetchWpPosts(widget.categoryPost),
+        future: HomeServiceApi().fetchPosts(widget.categoryPost),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {

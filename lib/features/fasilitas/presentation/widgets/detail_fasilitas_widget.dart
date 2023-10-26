@@ -1,10 +1,11 @@
-import 'package:dispora/views/list_fasilitas_widget.dart';
+import 'dart:developer' as logger show log;
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../service/service_api.dart';
-import 'dart:developer' as logger show log;
+import '../../service/fasilitas_service.dart';
+import 'list_fasilitas_widget.dart';
 
 class DetailFasilitasWidget extends StatefulWidget {
   final String kecamatan;
@@ -32,8 +33,10 @@ class _DetailFasilitasWidgetState extends State<DetailFasilitasWidget> {
           ),
         ),
       ),
+
+      // body: Text("testing"),
       body: FutureBuilder(
-        future: fetchFasilitas(),
+        future: FasilitasServiceApi().fetchFasilitas(),
         builder: (_, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return _buildLoadingWidget();

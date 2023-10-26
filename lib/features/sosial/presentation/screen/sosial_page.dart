@@ -1,6 +1,7 @@
-import 'package:dispora/views/sarpras_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../../fasilitas/presentation/widgets/sarpras_widget.dart';
 
 class SosialPage extends StatelessWidget {
   const SosialPage({Key? key}) : super(key: key);

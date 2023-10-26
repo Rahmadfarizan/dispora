@@ -4,20 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import '../service/service_api.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: VideoPage(),
-    );
-  }
-}
+import '../../service/video_service.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({Key? key}) : super(key: key);
