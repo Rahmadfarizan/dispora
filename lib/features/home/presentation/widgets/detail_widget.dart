@@ -6,18 +6,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
 class Detail extends StatefulWidget {
   final String? title;
   final String? content;
   final String? image;
+  final String? date;
+  final String? category;
 
   const Detail({
     super.key,
     this.title = "",
     this.content = "",
     this.image = "",
+    this.date = "",
+    this.category = "",
   });
 
   @override
@@ -32,6 +38,7 @@ class _DetailState extends State<Detail> {
   @override
   void initState() {
     super.initState();
+    initializeDateFormatting();
 
     _scrollController.addListener(() {
       if (_scrollController.offset <= 0) {
@@ -66,6 +73,8 @@ class _DetailState extends State<Detail> {
   @override
   Widget build(BuildContext context) {
     String modifiedHtmlString = widget.content!.replaceAll('data-src', 'src');
+    Intl.defaultLocale = 'id';
+    var formatter = DateFormat("EEEE, dd MMMM y HH:mm 'WIB'", "id_ID");
     RegExp regex = RegExp(r"!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)");
     RegExpMatch? match = regex.firstMatch(modifiedHtmlString);
     double? latitude;
@@ -177,16 +186,41 @@ class _DetailState extends State<Detail> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (widget.category!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          widget.category!,
+                          style: GoogleFonts.arimo(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
                     Text(
                       widget.title!,
                       style: GoogleFonts.arimo(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 16,
                     ),
+                    Divider(),
+                    if (widget.date!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Text(
+                          formatter.format(DateTime.parse(widget.date!)),
+                          style: GoogleFonts.arimo(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
                     (modifiedHtmlString.contains("www.google.com/maps"))
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(10),
@@ -239,7 +273,8 @@ class _DetailState extends State<Detail> {
                         : HtmlWidget(
                             modifiedHtmlString,
                             textStyle: GoogleFonts.arimo(
-                              fontSize: 16,
+                              fontSize: 18,
+                              height: 1.5,
                             ),
                           ),
                   ],
