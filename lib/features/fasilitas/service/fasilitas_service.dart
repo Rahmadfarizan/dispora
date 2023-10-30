@@ -44,7 +44,7 @@ class FasilitasServiceApi {
     }
   }
 
-  Future<List?> fetchDetailVenue(String link) async {
+  Future<List?> fetchDetailVenue() async {
     // final Uri url =
     //     Uri.parse("https://dispora.pekanbaru.go.id/wp-json/wp/v2/pages?_embed");
 

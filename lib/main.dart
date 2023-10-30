@@ -1,4 +1,5 @@
 import 'package:dispora/features/home/presentation/provider/home_provider.dart';
+import 'package:dispora/features/sosial/presentation/provider/sosial_provider.dart';
 
 import 'features/fasilitas/presentation/provider/fasilitas_provider.dart';
 import 'package:provider/provider.dart';
@@ -72,6 +73,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
         ChangeNotifierProvider<FasilitasProvider>(
             create: (_) => FasilitasProvider()),
+        ChangeNotifierProvider<SosialProvider>(create: (_) => SosialProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -1,10 +1,42 @@
+import 'package:dispora/features/sosial/presentation/provider/sosial_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-import '../../../fasilitas/presentation/widgets/sarpras_widget.dart';
+import '../../model/sosial_model.dart';
+import '../../service/sosial_service.dart';
+import '../widgets/sarpras_widget.dart';
 
-class SosialPage extends StatelessWidget {
+import 'dart:developer' as logger show log;
+
+class SosialPage extends StatefulWidget {
   const SosialPage({Key? key}) : super(key: key);
+
+  @override
+  State<SosialPage> createState() => _SosialPageState();
+}
+
+class _SosialPageState extends State<SosialPage> {
+  Future<List<Sosial>>? futureLoadKomunitas;
+  bool _isLoading = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.wait([context.read<SosialProvider>().loadKomunitas()])
+        .then((results) {
+      futureLoadKomunitas = results[0] as Future<List<Sosial>>?;
+      setState(() {
+        _isLoading = false;
+      });
+    }).catchError((error) {
+      // Handle errors if any of the futures fail
+      logger.log(error.toString());
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +61,7 @@ class SosialPage extends StatelessWidget {
               Tab(
                 text: 'E-Sarpras Bertuah',
               ),
-              Tab(text: 'E-Booking'),
+              // Tab(text: 'E-Booking'),
               Tab(text: 'Virtual Tour Fasilitas Olahraga'),
               Tab(text: 'E-Data'),
             ],
@@ -39,10 +71,11 @@ class SosialPage extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           children: [
             SarprasWidget(),
-            _buildWidgetComingSoon(
-                "https://dispora.pekanbaru.go.id/wp-content/uploads/2023/08/stadium-150x150.png",
-                'E-Booking',
-                'Booking berbagai venue olahraga maupun non-olahraga di Kota Pekanbaru'),
+
+            // _buildWidgetComingSoon(
+            //     "https://dispora.pekanbaru.go.id/wp-content/uploads/2023/08/stadium-150x150.png",
+            //     'E-Booking',
+            //     'Booking berbagai venue olahraga maupun non-olahraga di Kota Pekanbaru'),
             _buildWidgetComingSoon(
                 "https://dispora.pekanbaru.go.id/wp-content/uploads/2023/08/virtual-tour-150x150.png",
                 'Virtual Tour Fasilitas Olahraga',

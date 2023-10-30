@@ -44,7 +44,7 @@ class FasilitasProvider extends ChangeNotifier {
     try {
       _venuesDetail.clear();
       _isLoading = true;
-      final responseData = await _apiService.fetchDetailVenue(link);
+      final responseData = await _apiService.fetchDetailVenue();
       if (responseData == null) {
         _venuesDetail = [];
         _isLoading = false;
