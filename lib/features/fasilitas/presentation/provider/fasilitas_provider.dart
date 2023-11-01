@@ -9,10 +9,12 @@ class FasilitasProvider extends ChangeNotifier {
   final _apiService = FasilitasServiceApi();
   List<Fasilitas> _venues = [];
   List<FasilitasDetail> _venuesDetail = [];
+  List<FasilitasList> _venuesList = [];
   bool _isLoading = false;
 
   List<Fasilitas> get venues => _venues;
   List<FasilitasDetail> get venuesDetail => _venuesDetail;
+  List<FasilitasList> get venuesList => _venuesList;
 
   Future<List<Fasilitas>> loadFasilitas(String link) async {
     try {
@@ -62,6 +64,44 @@ class FasilitasProvider extends ChangeNotifier {
     } catch (e) {
       if (kDebugMode) {
         logger.log('FatalException-loadDetailFasilitas: $e');
+      }
+      throw 'Terjadi kesalahan saat mengambil data. \nMohon coba kembali nanti.';
+    }
+  }
+
+  Future<List<FasilitasList>> loadListFasilitas(String kecamatan) async {
+    try {
+      kecamatan =
+          (kecamatan == "Bina widya") ? kecamatan = "Bina Widya" : kecamatan;
+      _venuesList.clear();
+      _isLoading = true;
+      final responseData = await _apiService.fetchFasilitasList();
+      if (responseData == null) {
+        _venuesList = [];
+        _isLoading = false;
+      } else {
+        final List listData = responseData;
+
+        for (var i = 0; i < listData.length; i++) {
+          if (kecamatan == "Rumbai") {
+            if (listData[i]['title']["rendered"].contains(kecamatan) &&
+                !listData[i]['title']["rendered"].contains("Rumbai Barat")) {
+              _venuesList.add(FasilitasList.fromJson(listData[i]));
+            }
+          } else {
+            if (listData[i]['title']["rendered"].contains(kecamatan)) {
+              _venuesList.add(FasilitasList.fromJson(listData[i]));
+            }
+          }
+        }
+        logger.log("loadListFasilitas $kecamatan => $_venuesList");
+        _isLoading = false;
+      }
+      notifyListeners();
+      return _venuesList;
+    } catch (e) {
+      if (kDebugMode) {
+        logger.log('FatalException-loadListFasilitas: $e');
       }
       throw 'Terjadi kesalahan saat mengambil data. \nMohon coba kembali nanti.';
     }

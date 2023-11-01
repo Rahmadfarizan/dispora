@@ -35,3 +35,22 @@ class FasilitasDetail {
     );
   }
 }
+
+class FasilitasList {
+  final String title;
+  final String linkImage;
+  final String content;
+
+  FasilitasList({
+    required this.title,
+    required this.linkImage,
+    required this.content,
+  });
+  factory FasilitasList.fromJson(Map<String, dynamic> json) {
+    return FasilitasList(
+      title: json['title']["rendered"],
+      linkImage: json["_links"]["wp:attachment"][0]["href"],
+      content: json["_links"]["self"][0]["href"],
+    );
+  }
+}

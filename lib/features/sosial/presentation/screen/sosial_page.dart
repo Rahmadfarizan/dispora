@@ -1,8 +1,10 @@
+import 'package:dispora/features/fasilitas/presentation/widgets/detail_fasilitas_widget.dart';
 import 'package:dispora/features/sosial/presentation/provider/sosial_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'dart:developer' as logger show log;
 
 import '../../model/sosial_model.dart';
@@ -45,7 +47,7 @@ class _SosialPageState extends State<SosialPage> {
   @override
   Widget build(BuildContext context) {
     return (_isLoading)
-        ? CircularProgressIndicator()
+        ? loadingTabBar()
         : Consumer<SosialProvider>(
             builder: (context, sosial, child) {
               return DefaultTabController(
@@ -71,7 +73,8 @@ class _SosialPageState extends State<SosialPage> {
                         ),
                         for (int i = 0; i < sosial.komunitas.length; i++)
                           Tab(
-                            text: sosial.komunitas[i].title,
+                            text:
+                                sosial.komunitas[i].title.capitalizeEachWord(),
                           )
                       ],
                     ),
@@ -100,6 +103,45 @@ class _SosialPageState extends State<SosialPage> {
               );
             },
           );
+  }
+
+  loadingTabBar() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(color: Colors.white, boxShadow: [
+        BoxShadow(color: Colors.grey.shade300, offset: Offset(0, 1))
+      ]),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        enabled: true,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                for (int i = 0; i < 5; i++)
+                  Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    width: 80,
+                    height: 24,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                      color: Colors.white,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Center _buildWidgetComingSoon(image, title, description) {
@@ -197,19 +239,35 @@ class _TabContentState extends State<TabContent> {
       return 'width="$newWidth" style="border-radius: 20px;';
     });
     return (_isLoading)
-        ? CircularProgressIndicator()
+        ? _buildLoadingWidget()
         : Consumer<SosialProvider>(
             builder: (context, value, child) => ListView(
                   children: [
-                    // for (int i = 0; i < value.komunitasDetail.length; i++)
-                    //   Image.network(value.komunitasDetail[i].image),
-                    HtmlWidget(
-                      modifiedHtmlString,
-                      textStyle: GoogleFonts.arimo(
-                        fontSize: 16,
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: HtmlWidget(
+                        modifiedHtmlString,
+                        textStyle: GoogleFonts.arimo(
+                          fontSize: 16,
+                        ),
                       ),
                     )
                   ],
                 ));
+  }
+
+  Widget _buildLoadingWidget() {
+    return Center(
+      child: SizedBox(
+        width: 200.0,
+        height: 100.0,
+        child: Shimmer.fromColors(
+          baseColor: const Color(0xff29366A),
+          highlightColor: const Color(0xffF05C39),
+          period: const Duration(milliseconds: 1200),
+          child: Image.asset("assets/logodispora.png"),
+        ),
+      ),
+    );
   }
 }

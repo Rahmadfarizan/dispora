@@ -15,12 +15,13 @@ import '../../service/home_service.dart';
 class HomePage extends StatefulWidget {
   final int categoryPost;
   final String categoryTitle;
-  final bool isLoading;
-  const HomePage(
-      {super.key,
-      required this.categoryPost,
-      required this.categoryTitle,
-      required this.isLoading});
+  final bool loadingCategory;
+  const HomePage({
+    super.key,
+    required this.categoryPost,
+    required this.categoryTitle,
+    required this.loadingCategory,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -47,21 +48,20 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<Berita>>? futureLoadBerita;
 
-  bool _isLoading = false;
+  bool _isLoading = true;
   @override
   void initState() {
     super.initState();
-    _isLoading = true;
 
-    futureLoadBerita =
-        context.read<HomeProvider>().loadBerita(widget.categoryPost);
-
-    futureLoadBerita?.then((result) {
+    Future.wait([
+      context.read<HomeProvider>().loadBerita(widget.categoryPost),
+    ]).then((results) {
+      futureLoadBerita = results[0] as Future<List<Berita>>?;
       setState(() {
         _isLoading = false;
       });
     }).catchError((error) {
-      // Handle errors if the future fails
+      // Handle errors if any of the futures fail
       logger.log(error.toString());
       setState(() {
         _isLoading = false;
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
       "https://dispora.di-mep.com/wp-content/uploads/2023/09/dispora-OPD-18-58552.jpeg"
     ];
 
-    return (widget.isLoading || _isLoading)
+    return (_isLoading || widget.loadingCategory)
         ? _buildLoadingListWidget()
         : Consumer<HomeProvider>(
             builder: (context, home, _) => (home.berita.isEmpty)
