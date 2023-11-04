@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import 'features/home/service/home_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:developer' as logger show log;
@@ -15,13 +14,6 @@ import 'features/home/presentation/screen/home_screen.dart';
 import 'features/sosial/presentation/screen/sosial_page.dart';
 import 'features/video/presentation/screen/video_page.dart';
 import 'features/fasilitas/presentation/screen/fasilitas_screen.dart';
-
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
-  runApp(const MyApp());
-}
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
